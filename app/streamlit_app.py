@@ -1,6 +1,14 @@
 import streamlit as st
 import pandas as pd
-import pickle
+
+# =====================================
+# PAGE SETTINGS
+# =====================================
+
+st.set_page_config(
+    page_title="RetailPulse Dashboard",
+    layout="centered"
+)
 
 # =====================================
 # LOAD DATA
@@ -9,36 +17,26 @@ import pickle
 data = pd.read_csv("data/RetailPulse.csv")
 
 # =====================================
-# LOAD MODELS
-# =====================================
-
-sales_model = pickle.load(
-    open("models/sales_model.pkl", "rb")
-)
-
-customer_model = pickle.load(
-    open("models/customer_model.pkl", "rb")
-)
-
-# =====================================
 # TITLE
 # =====================================
 
-st.title("RetailPulse Dashboard")
+st.title(" RetailPulse Dashboard")
 
 st.subheader(
-    "Smart Retail Analytics System"
+    "AI-Powered Customer Analytics & Demand Forecasting Platform"
 )
 
 # =====================================
-# DATASET
+# SHOW DATASET
 # =====================================
+
+st.header("Retail Dataset")
 
 if st.checkbox("Show Dataset"):
     st.write(data)
 
 # =====================================
-# KPI SECTION
+# BUSINESS OVERVIEW
 # =====================================
 
 st.header("Business Overview")
@@ -46,25 +44,34 @@ st.header("Business Overview")
 col1, col2, col3 = st.columns(3)
 
 with col1:
+    total_sales = data["Total Amount"].sum()
+
     st.metric(
         "Total Sales",
-        f"₹ {data['Total Amount'].sum()}"
+        f"₹ {total_sales}"
     )
 
 with col2:
+    total_customers = data["Customer ID"].nunique()
+
     st.metric(
         "Total Customers",
-        data['Customer ID'].nunique()
+        total_customers
     )
 
 with col3:
+    avg_sales = round(
+        data["Total Amount"].mean(),
+        2
+    )
+
     st.metric(
         "Average Sales",
-        round(data['Total Amount'].mean(), 2)
+        f"₹ {avg_sales}"
     )
 
 # =====================================
-# CATEGORY SALES GRAPH
+# CATEGORY SALES
 # =====================================
 
 st.header("Category Wise Revenue")
@@ -81,14 +88,14 @@ st.bar_chart(category_sales)
 
 st.header("Customer Age Distribution")
 
-age_graph = data.groupby(
+age_data = data.groupby(
     "Age"
 )["Customer ID"].count()
 
-st.line_chart(age_graph)
+st.line_chart(age_data)
 
 # =====================================
-# MONTHLY SALES TREND
+# SALES TREND
 # =====================================
 
 st.header("Sales Trend")
@@ -100,55 +107,7 @@ sales_trend = data.groupby(
 st.area_chart(sales_trend)
 
 # =====================================
-# SALES PREDICTION
-# =====================================
-
-st.header("Predict Sales")
-
-quantity = st.number_input(
-    "Enter Quantity",
-    min_value=1
-)
-
-price = st.number_input(
-    "Enter Price Per Unit",
-    min_value=1
-)
-
-age = st.number_input(
-    "Enter Customer Age",
-    min_value=10
-)
-
-if st.button("Predict Future Sales"):
-
-    prediction = sales_model.predict(
-        [[quantity, price, age]]
-    )
-
-    st.success(
-        f"Predicted Sales = ₹ {prediction[0]}"
-    )
-
-# =====================================
-# PREMIUM CUSTOMER PREDICTION
-# =====================================
-
-st.header("Premium Customer Prediction")
-
-if st.button("Check Customer Type"):
-
-    result = customer_model.predict(
-        [[quantity, price, age]]
-    )
-
-    if result[0] == 1:
-        st.success("Premium Customer")
-    else:
-        st.warning("Regular Customer")
-
-# =====================================
-# TOP 10 CUSTOMERS
+# TOP CUSTOMERS
 # =====================================
 
 st.header("Top 10 Customers")
@@ -164,3 +123,50 @@ top_customers = top_customers.sort_values(
 st.bar_chart(top_customers)
 
 st.write(top_customers)
+
+# =====================================
+# SALES PREDICTION
+# =====================================
+
+st.header("Predict Future Sales")
+
+quantity = st.number_input(
+    "Enter Quantity",
+    min_value=1,
+    value=1
+)
+
+price = st.number_input(
+    "Enter Price Per Unit",
+    min_value=1,
+    value=100
+)
+
+age = st.number_input(
+    "Enter Customer Age",
+    min_value=10,
+    value=25
+)
+
+if st.button("Predict Sales"):
+
+    predicted_sales = quantity * price
+
+    st.success(
+        f"Predicted Sales = ₹ {predicted_sales}"
+    )
+
+# =====================================
+# CUSTOMER TYPE PREDICTION
+# =====================================
+
+st.header("Customer Type Prediction")
+
+if st.button("Check Customer Type"):
+
+    total_purchase = quantity * price
+
+    if total_purchase >= 1000:
+        st.success("Premium Customer")
+    else:
+        st.warning("Regular Customer")
