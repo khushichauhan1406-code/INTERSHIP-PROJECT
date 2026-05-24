@@ -6,25 +6,18 @@ import pickle
 # LOAD DATA
 # =====================================
 
-data = pd.read_csv(
-    r"data\RetailPulse.csv")
+data = pd.read_csv("data/RetailPulse.csv")
 
 # =====================================
 # LOAD MODELS
 # =====================================
 
 sales_model = pickle.load(
-    open(
-        r"C:\Users\LENOVO\OneDrive\Desktop\INTERSHIP PROJECT\models\sales_model.pkl",
-        "rb"
-    )
+    open("models/sales_model.pkl", "rb")
 )
 
 customer_model = pickle.load(
-    open(
-        r"C:\Users\LENOVO\OneDrive\Desktop\INTERSHIP PROJECT\models\customer_model.pkl",
-        "rb"
-    )
+    open("models/customer_model.pkl", "rb")
 )
 
 # =====================================
