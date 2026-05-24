@@ -7,8 +7,7 @@ import pickle
 # =====================================
 
 data = pd.read_csv(
-    r"C:\Users\LENOVO\OneDrive\Desktop\INTERSHIP PROJECT\data\RetailPulse.csv"
-)
+    r"C:\Users\LENOVO\OneDrive\Desktop\INTERSHIP PROJECT\data\RetailPulse.csv")
 
 # =====================================
 # LOAD MODELS
